@@ -28,16 +28,24 @@
             padding: 20px;
         }
 
+        .canvas-container {
+            width: 100%;
+            max-width: 75vh;
+            aspect-ratio: 3/2;
+            margin-bottom: 20px;
+        }
+
         canvas {
-            width: 75vh;
-            height: 50vh;
+            width: 100%;
+            height: 100%;
             background-color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
         }
 
         .slider-container {
-            width: 75vh;
+            width: 100%;
+            max-width: 75vh;
             padding: 20px;
             background: white;
             border-radius: 8px;
@@ -57,12 +65,41 @@
             margin-bottom: 1rem;
             font-weight: 500;
         }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 10px;
+            }
+
+            .canvas-container {
+                max-width: 100%;
+            }
+
+            .slider-container {
+                max-width: 100%;
+                padding: 15px;
+            }
+        }
+
+        /* Small Mobile Styles */
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding: 5px;
+            }
+
+            .slider-container {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="content-wrapper">
-        <canvas id="canvas"></canvas>
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
         <div class="slider-container">
             <label for="timeSlider" class="form-label">Speed Control</label>
             <input type="range" class="form-range" id="timeSlider" min="1" max="5" value="1" step="1">
