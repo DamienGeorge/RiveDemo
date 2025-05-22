@@ -15,8 +15,6 @@ const riv = new rive.Rive({
     artboard: "Time Calc H", // Optional. If not supplied the default is selected
     stateMachines: stateMachine,
     onLoad: () => {
-        delay(1000)
-
         riv.resizeDrawingSurfaceToCanvas();
     }
 })
