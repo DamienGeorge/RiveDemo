@@ -6,7 +6,8 @@ const layoutHTrigger = document.getElementById('layoutHTrigger');
 
 const sliderValueDisplay = document.getElementById('sliderValue');
 
-var timeout = 1000;
+const baseTimeout = 2000;
+var timeout = baseTimeout;
 var speed = 1;
 const multiplier = 1;
 
@@ -35,42 +36,58 @@ const riv = new rive.Rive({
 
         const location = viewModelInstance.string('City Name');
 
-        navigator.permissions.query({ name: 'geolocation' }).then(async result => {
-            if (result.state === 'granted') {
-                // Geolocation is available
-                console.log('Geolocation is available');
-                console.log(navigator.geolocation);
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        async (position) => {
-                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-                            const data = await response.json();
-                            console.log(data.address.town);
-                            const city = data.address.city || data.address.town;
-                            location.value = city;
-                        },
-                        (error) => {
-                            console.log('Error Getting Location');
-                        }
-                    );
-                }
-            } else {
-                // If geolocation is not available, use IP-based location
-                try {
-                    const response = await fetch('https://ipapi.co/json/');
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
                     const data = await response.json();
-                    console.log('Geolocation is not available, using IP-based location', data.city);
-                    location.value = data.city;
-                } catch (error) {
-                    console.log('Error Getting Location'); // Fallback to London if IP location fails
+                    console.log(data.address.town);
+                    const city = data.address.city || data.address.town;
+                    location.value = city;
+                },
+                (error) => {
+                    navigator.permissions.query({ name: 'geolocation' }).then(async result => {
+                        if (result.state === 'granted') {
+                            navigator.geolocation.getCurrentPosition(
+                                async (position) => {
+                                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+                                    const data = await response.json();
+                                    console.log(data.address.town);
+                                    const city = data.address.city || data.address.town;
+                                    location.value = city;
+                                },
+                                (error) => {
+                                    console.log('Error Getting Location');
+                                }
+                            );
+                        } else {
+                            // If geolocation is not available, use IP-based location
+                            try {
+                                const response = await fetch('https://ipapi.co/json/');
+                                const data = await response.json();
+                                console.log('Geolocation is not available, using IP-based location', data.city);
+                                location.value = data.city;
+                            } catch (error) {
+                                console.log('Error Getting Location'); // Fallback to London if IP location fails
+                            }
+                        }
+                    });
                 }
-            }
-        })
+            );
+        }
 
         const date = new Date();
+        console.log(date);
 
+        const IncrementTime = () => {
+            if (speed !== 1) {
+                date.setMinutes(date.getMinutes() + 1);
+            }
+
+            setTimeout(IncrementTime, baseTimeout / speed);
+        }
         const updateLocalTime = () => {
-            date.setMinutes(date.getMinutes() + speed * multiplier);
 
             //12 hour clock
             //const timeFormatted = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
@@ -93,6 +110,7 @@ const riv = new rive.Rive({
         }
 
         updateLocalTime();
+        IncrementTime();
     }
 })
 
@@ -101,7 +119,7 @@ slider.addEventListener('input', (event) => {
     const value = parseInt(event.target.value);
     sliderValueDisplay.textContent = value + "x";
     speed = value;
-
+    timeout = baseTimeout / (speed * 10);
     console.log('speed', speed);
     //updateTime();
 });
