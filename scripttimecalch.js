@@ -77,9 +77,6 @@ const riv = new rive.Rive({
             );
         }
 
-        const date = new Date();
-        console.log(date);
-
         const IncrementTime = () => {
             if (speed !== 1) {
                 date.setMinutes(date.getMinutes() + 1);
@@ -87,15 +84,20 @@ const riv = new rive.Rive({
 
             setTimeout(IncrementTime, baseTimeout / speed);
         }
-        const updateLocalTime = () => {
+        
+        var date;
+        setInterval(() => {
 
-            //12 hour clock
-            //const timeFormatted = date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
-            //console.log(timeFormatted);
-
-            /*  var minute = timeFormatted.split(':')[1].trim().substring(0, 2);
-             var hour = timeFormatted.split(':')[0].trim().padStart(2, '0'); */
-
+            if (speed !== 1) {
+                const IncrementTime = () => {
+                        date.setMinutes(date.getMinutes() + 1);
+        
+                    setTimeout(IncrementTime, baseTimeout / speed);
+                }
+            }
+            else{
+                date= new Date();
+            }
             //24 hour clock
             const minute = date.getMinutes();
             const hour = date.getHours();
@@ -105,11 +107,8 @@ const riv = new rive.Rive({
 
             minuteInput.value = minute;
             hourInput.value = hour;
+        })
 
-            setTimeout(updateLocalTime, timeout);
-        }
-
-        updateLocalTime();
         IncrementTime();
     }
 })
