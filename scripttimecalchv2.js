@@ -166,7 +166,7 @@ function handleTrainToggles() {
     });
 }
 
-let isStandardLayout = true;
+let isStandardLayout = false;
 let currentTrScreen = 0;
 const trScreens = ['Tr S Timetable', 'Tr S Emergency', 'Tr S Images', 'Tr S Transport'];
 
