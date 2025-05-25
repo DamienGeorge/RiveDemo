@@ -14,6 +14,7 @@ var IsDemo = false;
 
 const stateMachine = "Main state machine";
 const toggleInterval = 1;
+let storedPosition = null; // Store the position globally
 
 const riv = new rive.Rive({
     src: "time_main_25_may.riv",
@@ -42,6 +43,7 @@ const riv = new rive.Rive({
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
+                    storedPosition = position; // Store the position
                     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
                     const data = await response.json();
                     console.log(data.address.town);
@@ -114,32 +116,25 @@ const riv = new rive.Rive({
             // Get weather data and update temperature
             const temperatureInput = viewModelInstance.number('Temperature');
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate');
-                        const currentTime = new Date().getTime();
+            if (storedPosition) { // Use stored position instead of requesting again
+                const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate') || '0';
+                const currentTime = new Date().getTime();
 
-                        if (!lastWeatherUpdate || (currentTime - parseInt(lastWeatherUpdate)) >= 300000) { // 300000ms = 5 minutes
-                            try {
-                                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${position.coords.latitude}&longitude=${position.coords.longitude}&current=temperature_2m`);
-                                const data = await response.json();
-                                if (data && data.current && data.current.temperature_2m) {
-                                    const temp = Math.round(data.current.temperature_2m);
-                                    temperatureInput.value = temp;
-                                    localStorage.setItem('lastWeatherUpdate', currentTime.toString());
-                                } else {
-                                    console.log('Invalid weather data received:', data);
-                                }
-                            } catch (error) {
-                                console.log('Error fetching weather data:', error);
+                if (!lastWeatherUpdate || (currentTime - parseInt(lastWeatherUpdate)) >= 300000) { // 300000ms = 5 minutes
+                    console.log(storedPosition);
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${storedPosition.coords.latitude}&longitude=${storedPosition.coords.longitude}&current=temperature_2m`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.current && data.current.temperature_2m) {
+                                const temp = Math.round(data.current.temperature_2m);
+                                temperatureInput.value = temp;
+                                localStorage.setItem('lastWeatherUpdate', currentTime.toString());
                             }
-                        }
-                    },
-                    (error) => {
-                        console.log('Error getting location:', error);
-                    }
-                );
+                        })
+                        .catch(error => {
+                            console.log('Error fetching weather data:', error);
+                        });
+                }
             }
         });
 
@@ -161,7 +156,10 @@ slider.addEventListener('input', (event) => {
         IsDemo = true;
         timeout = baseTimeout/ speed;
         spedUpDate = new Date();
-        speedUpTime();
+        if (window.speedUpTimeout) {
+            clearTimeout(window.speedUpTimeout);
+        }
+         setTimeout(speedUpTime);
     }
     
     console.log('speed', speed);
@@ -169,7 +167,7 @@ slider.addEventListener('input', (event) => {
 
 function speedUpTime() {
     spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-    setTimeout(speedUpTime,timeout);
+    window.speedUpTimeout =setTimeout(speedUpTime,timeout);
 }
 
 const fireTrigger = (triggerName) => {
