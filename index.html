@@ -115,14 +115,14 @@
                 </div>
                 <div class="dropdown col-sm-3">
                     <button class="btn btn-primary dropdown-toggle mt-3" type="button" id="trainTogglesDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
+                        data-bs-toggle="dropdown" aria-expanded="false" onclick="handleTrainToggles()">
                         Train Toggles
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="trainTogglesDropdown">
-                        <li><button id="TrSTableTrigger" class="dropdown-item">Time Table</button></li>
-                        <li><button id="TrSEmergencyTrigger" class="dropdown-item">Emergency</button></li>
-                        <li><button id="TrSImagesTrigger" class="dropdown-item">Images</button></li>
-                        <li><button id="TrSTransportTrigger" class="dropdown-item">Transport</button></li>
+                        <li><button id="TrSTableTrigger" class="dropdown-item" onclick="console.log(this.id)">Time Table</button></li>
+                        <li><button id="TrSEmergencyTrigger" class="dropdown-item" onclick="console.log(this.id)">Emergency</button></li>
+                        <li><button id="TrSImagesTrigger" class="dropdown-item" onclick="console.log(this.id)">Images</button></li>
+                        <li><button id="TrSTransportTrigger" class="dropdown-item" onclick="console.log(this.id)">Transport</button></li>
                     </ul>
                 </div>
             </div>
@@ -137,7 +137,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv2.js"></script>
+    <script src="scripttimecalchv3.js"></script>
 </body>
 
 </html>
