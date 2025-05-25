@@ -6,14 +6,14 @@ const layoutHTrigger = document.getElementById('layoutHTrigger');
 
 const sliderValueDisplay = document.getElementById('sliderValue');
 
-const baseTimeout = 1000*30;
+const baseTimeout = 1000;
 var timeout = baseTimeout;
 var speed = 1;
-const multiplier = 1;
+var multiplier = 10;
 var IsDemo = false;
 
 const stateMachine = "Main state machine";
-const toggleInterval = 1;
+const toggleInterval = 5; //Determines how often the layout toggles
 let storedPosition = null; // Store the position globally
 
 const riv = new rive.Rive({
@@ -120,8 +120,9 @@ const riv = new rive.Rive({
                 const lastWeatherUpdate = localStorage.getItem('lastWeatherUpdate') || '0';
                 const currentTime = new Date().getTime();
 
+                temperatureInput.value = localStorage.getItem('temperature');
+
                 if (!lastWeatherUpdate || (currentTime - parseInt(lastWeatherUpdate)) >= 300000) { // 300000ms = 5 minutes
-                    console.log(storedPosition);
                     fetch(`https://api.open-meteo.com/v1/forecast?latitude=${storedPosition.coords.latitude}&longitude=${storedPosition.coords.longitude}&current=temperature_2m`)
                         .then(response => response.json())
                         .then(data => {
@@ -129,6 +130,7 @@ const riv = new rive.Rive({
                                 const temp = Math.round(data.current.temperature_2m);
                                 temperatureInput.value = temp;
                                 localStorage.setItem('lastWeatherUpdate', currentTime.toString());
+                                localStorage.setItem('temperature', temp);
                             }
                         })
                         .catch(error => {
@@ -154,7 +156,7 @@ slider.addEventListener('input', (event) => {
     }
     else {
         IsDemo = true;
-        timeout = baseTimeout/ speed;
+        timeout = (baseTimeout*multiplier)/ speed;
         spedUpDate = new Date();
         if (window.speedUpTimeout) {
             clearTimeout(window.speedUpTimeout);
