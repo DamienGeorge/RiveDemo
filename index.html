@@ -20,22 +20,30 @@
             position: relative;
             height: 100vh;
             width: 100vw;
+            margin: 0;
+            padding: 0;
         }
         .canvas-container {
-            position: fixed;
+            position: relative;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
+            margin: 0;
+            padding: 0;
             z-index: 1;
+            object-fit: fill;
         }
         canvas {
             width: 100vw;
-            height: 100vh;
-            background-color: rgb(255, 255, 255);
-            border-radius: 0;
-            box-shadow: none;
+            height: 100%;
             display: block;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            border: none;
+            box-shadow: none;
+            aspect-ratio: 16/9;
         }
         .overlay-controls {
             position: fixed;
@@ -49,6 +57,48 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transform: translateY(100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+        }
+        .overlay-controls.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .overlay-close-btn {
+            position: absolute;
+            top: 8px;
+            right: 24px;
+            z-index: 20;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .floating-toggle-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 20;
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .floating-toggle-btn:hover {
+            background: #084298;
         }
         .mode-toggle {
             margin-top: -32px;
@@ -130,7 +180,8 @@
     <div class="canvas-container">
         <canvas id="canvas"></canvas>
     </div>
-    <div class="overlay-controls">
+    <div class="overlay-controls" id="overlayControls">
+        <button class="overlay-close-btn" id="closeOverlay" title="Close">&times;</button>
         <div class="mode-toggle">
             <div class="mode-toggle-inner">
                 <div class="btn-group" role="group" aria-label="Mode toggle">
@@ -143,7 +194,7 @@
         </div>
         <div class="slider-row">
             <label for="timeSlider" class="slider-label">Speed Control</label>
-            <input type="range" class="form-range" id="timeSlider" min="1" max="5" value="1" step="1">
+            <input type="range" class="form-range" id="timeSlider" min="1" max="3" value="1" step="1">
             <div id="sliderValue" class="slider-value">1x</div>
         </div>
         <div class="controls-row">
@@ -159,23 +210,37 @@
                     <li><button id="TrSEmergencyTrigger" class="dropdown-item">Emergency</button></li>
                     <li><button id="TrSImagesTrigger" class="dropdown-item">Images</button></li>
                     <li><button id="TrSTransportTrigger" class="dropdown-item">Transport</button></li>
+                    <li><button id="TrSWeatherTrigger" class="dropdown-item">Weather</button></li>
                 </ul>
             </div>
         </div>
     </div>
+    <button class="floating-toggle-btn" id="toggleOverlay" title="Show Controls">
+        <span>&#9881;</span>
+    </button>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv4.js"></script>
+    <script src="scripttimecalchv5.js"></script>
     <script>
+        // Overlay toggle logic
+        const overlay = document.getElementById('overlayControls');
+        const toggleBtn = document.getElementById('toggleOverlay');
+        const closeBtn = document.getElementById('closeOverlay');
+        toggleBtn.addEventListener('click', () => {
+            overlay.classList.add('active');
+            toggleBtn.style.display = 'none';
+        });
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            toggleBtn.style.display = 'flex';
+        });
         // Mode toggle logic (to be completed in JS file if needed)
-        // This disables dropdown in auto mode and enables in manual mode
         document.addEventListener('DOMContentLoaded', function() {
             const autoMode = document.getElementById('autoMode');
             const manualMode = document.getElementById('manualMode');
             const trainTogglesDropdown = document.getElementById('trainTogglesDropdown');
             const dropdownItems = document.querySelectorAll('.dropdown-item');
-
             function setMode() {
                 if (autoMode.checked) {
                     trainTogglesDropdown.classList.add('disabled');
