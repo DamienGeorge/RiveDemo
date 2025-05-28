@@ -7,137 +7,189 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
+        html, body {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
-
-        .content-wrapper {
+        body {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            background-color: rgb(255, 255, 255);
+            border-radius: 0;
+            box-shadow: none;
+            display: block;
+        }
+        .overlay-controls {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100vw;
+            background: rgba(255,255,255,0.96);
+            box-shadow: 0 -2px 12px rgba(9, 11, 102, 0.10);
+            z-index: 10;
+            padding: 0 0 16px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+        .mode-toggle {
+            margin-top: -32px;
+            margin-bottom: 12px;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            width: 100vw;
+        }
+        .mode-toggle-inner {
+            background: #fff;
+            border-radius: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 6px 24px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .slider-row {
             width: 90vw;
-            height: 85vh;
-            padding: 0px;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 12px;
         }
-
-        .canvas-container {
-            height: 100%;
+        .slider-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .slider-value {
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
             width: 100%;
-            max-width: 100%;
-            aspect-ratio: 16/9;
-            margin-bottom: 20px;
-
+            margin-top: 8px;
         }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            background-color: rgb(255, 255, 255);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+        .dropdown .dropdown-menu {
+            min-width: 160px;
         }
-
-        .slider-container {
-            width: 100%;
-            max-width: 100%;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(9, 11, 102, 0.1);
-            text-align: center;
-        }
-
         .form-range::-webkit-slider-thumb {
             background: #0d6efd;
         }
-
         .form-range::-moz-range-thumb {
             background: #0d6efd;
         }
-
         .form-label {
             margin-bottom: 1rem;
             font-weight: 500;
         }
-
-        /* Mobile Styles */
         @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 10px;
+            .slider-row {
+                width: 98vw;
             }
-
-            .canvas-container {
-                max-width: 100%;
+            .controls-row {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
             }
-
-            .slider-container {
-                max-width: 100%;
-                padding: 15px;
+            .mode-toggle-inner {
+                padding: 6px 8vw;
             }
         }
-
-        /* Small Mobile Styles */
         @media (max-width: 480px) {
-            .content-wrapper {
-                padding: 5px;
+            .slider-row {
+                width: 99vw;
             }
-
-            .canvas-container {
-                aspect-ratio: 9/16;
-            }
-
-            .slider-container {
-                padding: 10px;
+            .mode-toggle-inner {
+                padding: 6px 2vw;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="content-wrapper">
-        <div class="canvas-container">
-            <canvas id="canvas"></canvas>
-        </div>
-        <div class="slider-container">
-            <label for="timeSlider" class="form-label">Speed Control</label>
-            <input type="range" class="form-range" id="timeSlider" min="1" max="5" value="1" step="1">
-            <div id="sliderValue" class="mt-2">1x</div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <button id="layoutVTrigger" class="btn btn-primary mt-3">Weather Alert Demo</button>
-                </div>
-                <div class="col-sm-3">
-                    <button id="layoutHTrigger" class="btn btn-primary mt-3">Standard Layout</button>
-                </div>
-                <div class="dropdown col-sm-3">
-                    <button class="btn btn-primary dropdown-toggle mt-3" type="button" id="trainTogglesDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false" onclick="handleTrainToggles()">
-                        Train Toggles
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="trainTogglesDropdown">
-                        <li><button id="TrSTableTrigger" class="dropdown-item" onclick="console.log(this.id)">Time Table</button></li>
-                        <li><button id="TrSEmergencyTrigger" class="dropdown-item" onclick="console.log(this.id)">Emergency</button></li>
-                        <li><button id="TrSImagesTrigger" class="dropdown-item" onclick="console.log(this.id)">Images</button></li>
-                        <li><button id="TrSTransportTrigger" class="dropdown-item" onclick="console.log(this.id)">Transport</button></li>
-                    </ul>
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="overlay-controls">
+        <div class="mode-toggle">
+            <div class="mode-toggle-inner">
+                <div class="btn-group" role="group" aria-label="Mode toggle">
+                    <input type="radio" class="btn-check" name="mode" id="autoMode" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="autoMode">Automatic</label>
+                    <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="manualMode">Manual</label>
                 </div>
             </div>
         </div>
-
+        <div class="slider-row">
+            <label for="timeSlider" class="slider-label">Speed Control</label>
+            <input type="range" class="form-range" id="timeSlider" min="1" max="5" value="1" step="1">
+            <div id="sliderValue" class="slider-value">1x</div>
+        </div>
+        <div class="controls-row">
+            <button id="layoutVTrigger" class="btn btn-primary">Weather Alert Demo</button>
+            <button id="layoutHTrigger" class="btn btn-primary">Standard Layout</button>
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="trainTogglesDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Train Toggles
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="trainTogglesDropdown">
+                    <li><button id="TrSTableTrigger" class="dropdown-item">Time Table</button></li>
+                    <li><button id="TrSEmergencyTrigger" class="dropdown-item">Emergency</button></li>
+                    <li><button id="TrSImagesTrigger" class="dropdown-item">Images</button></li>
+                    <li><button id="TrSTransportTrigger" class="dropdown-item">Transport</button></li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="canvas-container">
-
-    </div>
-    </div>
-
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv3.js"></script>
+    <script src="scripttimecalchv4.js"></script>
+    <script>
+        // Mode toggle logic (to be completed in JS file if needed)
+        // This disables dropdown in auto mode and enables in manual mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const autoMode = document.getElementById('autoMode');
+            const manualMode = document.getElementById('manualMode');
+            const trainTogglesDropdown = document.getElementById('trainTogglesDropdown');
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+            function setMode() {
+                if (autoMode.checked) {
+                    trainTogglesDropdown.classList.add('disabled');
+                    dropdownItems.forEach(item => item.setAttribute('disabled', 'disabled'));
+                } else {
+                    trainTogglesDropdown.classList.remove('disabled');
+                    dropdownItems.forEach(item => item.removeAttribute('disabled'));
+                }
+            }
+            autoMode.addEventListener('change', setMode);
+            manualMode.addEventListener('change', setMode);
+            setMode();
+        });
+    </script>
 </body>
 
 </html>
