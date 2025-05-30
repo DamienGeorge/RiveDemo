@@ -173,6 +173,61 @@
                 padding: 6px 2vw;
             }
         }
+        /* Neumorphic 3-way switch for speed */
+        .neumorphic-switch.speed-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            width: 260px;
+            min-width: 220px;
+            max-width: 320px;
+            height: 48px;
+            background: #f1f2f6;
+            border-radius: 32px;
+            box-shadow: 0 2px 12px #e0e0e0, 0 1.5px 4px #fff inset;
+            cursor: pointer;
+            transition: background 0.3s;
+            padding: 0;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .neumorphic-switch.speed-switch .toggle-label {
+            flex: 1 1 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.08em;
+            color: #23242a;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: color 0.3s, opacity 0.3s;
+            min-width: 0;
+            user-select: none;
+        }
+        .neumorphic-switch.speed-switch .toggle-label.active {
+            color: #007aff;
+            opacity: 1;
+            font-weight: 700;
+        }
+        .neumorphic-switch.speed-switch .toggle-thumb {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            width: 72px;
+            height: 36px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px #e0e0e0, 0 1.5px 4px #fff inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.08em;
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+            z-index: 2;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -192,14 +247,32 @@
                 </div>
             </div>
         </div>
+        <div class="d-flex justify-content-center align-items-center mb-2" style="gap: 12px;">
+            <button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable Weather</button>
+            <button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable Sky</button>
+        </div>
         <div class="slider-row">
-            <label for="timeSlider" class="slider-label">Speed Control</label>
-            <input type="range" class="form-range" id="timeSlider" min="1" max="3" value="1" step="1">
-            <div id="sliderValue" class="slider-value">1x</div>
+            <span class="slider-label">Speed</span>
+            <div class="neumorphic-toggle my-2">
+                <div class="neumorphic-switch speed-switch" id="speedSwitch">
+                    <span class="toggle-label left" data-speed="1">1x</span>
+                    <span class="toggle-label center" data-speed="5">5x</span>
+                    <span class="toggle-label right" data-speed="10">10x</span>
+                    <span class="toggle-thumb" id="speedThumb"></span>
+                    <input type="hidden" id="speedValue" value="1">
+                </div>
+            </div>
         </div>
         <div class="controls-row">
-            <button id="layoutVTrigger" class="btn btn-primary">Weather Alert Demo</button>
-            <button id="layoutHTrigger" class="btn btn-primary">Standard Layout</button>
+            <div class="btn-group" role="group" aria-label="Layout toggle">
+                <input type="radio" class="btn-check" name="layoutMode" id="mainLayoutMode" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="mainLayoutMode">Main Layout</label>
+                <input type="radio" class="btn-check" name="layoutMode" id="detailLayoutMode" autocomplete="off">
+                <label class="btn btn-outline-primary" for="detailLayoutMode">Detail Layout</label>
+            </div>
+        </div>
+        <hr class="my-3" style="border-top: 1.5px solid #e5e5ea; width: 90%; margin: 18px auto;">
+        <div class="train-toggles-section d-flex justify-content-center align-items-center mb-2">
             <div class="dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" id="trainTogglesDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -221,7 +294,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv5.js"></script>
+    <script src="scripttimecalchv7.js"></script>
     <script>
         // Overlay toggle logic
         const overlay = document.getElementById('overlayControls');
