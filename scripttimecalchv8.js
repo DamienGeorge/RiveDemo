@@ -20,6 +20,7 @@ let currentTrScreen = 0;
 var spedUpDate = new Date();
 let lastToggledDate;
 const layoutToggleMap = new Map();
+let IsSpedUp = false;
 //#endregion
 
 //#region Constants
@@ -50,7 +51,7 @@ const trScreens = ['Tr Timetable', 'Tr Emergency', 'Tr Images', 'Tr Transport', 
 //#endregion
 
 const riv = new rive.Rive({
-    src: "time_main_june_1.riv",
+    src: "time_main_1_june_r1.riv",
     canvas: document.getElementById("canvas"),
     autoplay: true,
     autobind: true,
@@ -195,7 +196,7 @@ const riv = new rive.Rive({
         Object.keys(trainToggleButtonsMap).forEach(btnId => {
             const btn = document.getElementById(btnId);
             if (btn) {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', function (e) {
                     if (!autoMode.checked) { // Only allow in Manual mode
                         const triggerName = trainToggleButtonsMap[btnId];
                         const inputs = riv.stateMachineInputs(stateMachine);
@@ -210,11 +211,21 @@ const riv = new rive.Rive({
         // Add event listener for Enable Weather button to fire SkyCloudyTriggerName
         const enableSkyBtn = document.getElementById('enableSkyBtn');
         if (enableSkyBtn) {
-            enableSkyBtn.addEventListener('click', function() {
+            enableSkyBtn.addEventListener('click', function () {
                 console.log(inputs);
                 const trigger = inputs.find(i => i.name === EnableSkyTriggerName);
                 console.log(trigger);
                 if (trigger) trigger.fire();
+            });
+        }
+
+        // Add event listeners for mode toggle radio buttons to update isAutomaticMode
+        if (autoMode && manualMode) {
+            autoMode.addEventListener('change', function () {
+                if (autoMode.checked) isAutomaticMode = true;
+            });
+            manualMode.addEventListener('change', function () {
+                if (manualMode.checked) isAutomaticMode = false;
             });
         }
     }
@@ -258,16 +269,24 @@ speedLabels.forEach((label, i) => {
 // Initialize
 updateSpeedSwitch(0);
 
+
+
 function setSpeed(newSpeed) {
     speed = newSpeed;
 
     if (speed === 1) {
         IsDemo = false;
         timeout = baseTimeout;
+        IsSpedUp = false;
     } else {
         IsDemo = true;
-        timeout = (baseTimeout*multiplier)/ speed;
-        spedUpDate = new Date();
+        timeout = (baseTimeout * multiplier) / speed;
+
+        if (!spedUpDate || IsSpedUp === false) {
+            spedUpDate = new Date();
+            IsSpedUp = true;
+        }
+
         if (window.speedUpTimeout) {
             clearTimeout(window.speedUpTimeout);
         }
@@ -278,7 +297,7 @@ function setSpeed(newSpeed) {
 
 function speedUpTime() {
     spedUpDate.setMinutes(spedUpDate.getMinutes() + 1);
-    window.speedUpTimeout =setTimeout(speedUpTime,timeout);
+    window.speedUpTimeout = setTimeout(speedUpTime, timeout);
 }
 
 const fireTrigger = (triggerName) => {
@@ -377,12 +396,12 @@ const mainLayoutMode = document.getElementById('mainLayoutMode');
 const detailLayoutMode = document.getElementById('detailLayoutMode');
 
 if (mainLayoutMode && detailLayoutMode) {
-    mainLayoutMode.addEventListener('change', function() {
+    mainLayoutMode.addEventListener('change', function () {
         if (mainLayoutMode.checked) {
             fireTrigger(LayoutHTriggerName);
         }
     });
-    detailLayoutMode.addEventListener('change', function() {
+    detailLayoutMode.addEventListener('change', function () {
         if (detailLayoutMode.checked) {
             fireTrigger(LayoutVTriggerName);
         }

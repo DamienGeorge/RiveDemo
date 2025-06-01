@@ -7,7 +7,8 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        html, body {
+        html,
+        body {
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,6 +17,7 @@
             width: 100vw;
             overflow: hidden;
         }
+
         body {
             position: relative;
             height: 100vh;
@@ -23,6 +25,7 @@
             margin: 0;
             padding: 0;
         }
+
         .canvas-container {
             position: relative;
             top: 0;
@@ -34,6 +37,7 @@
             z-index: 1;
             object-fit: fill;
         }
+
         canvas {
             width: 100vw;
             height: 100%;
@@ -45,6 +49,7 @@
             box-shadow: none;
             aspect-ratio: 16/9;
         }
+
         .overlay-controls {
             position: fixed;
             top: 50%;
@@ -54,9 +59,9 @@
             max-width: 500px;
             min-height: 50%;
             padding: 40px 10px 32px 10px;
-            background: linear-gradient(135deg, rgba(60,70,85,0.84) 60%, rgba(60,70,85,0.68) 100%);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px #fff1 inset;
+            background: linear-gradient(135deg, rgba(60, 70, 85, 0.84) 60%, rgba(60, 70, 85, 0.68) 100%);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.32), 0 1.5px 4px #fff1 inset;
             backdrop-filter: blur(16px) saturate(1.2);
             -webkit-backdrop-filter: blur(16px) saturate(1.2);
             z-index: 100;
@@ -66,17 +71,19 @@
             align-items: center;
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1), opacity 0.3s cubic-bezier(.4, 0, .2, 1);
             box-sizing: border-box;
             overflow-y: auto;
             overflow-x: hidden;
             max-height: 90vh;
         }
+
         .overlay-controls.active {
             opacity: 1;
             pointer-events: auto;
             transform: translate(-50%, -50%) scale(1);
         }
+
         .overlay-close-btn {
             position: absolute;
             top: 12px;
@@ -88,6 +95,7 @@
             color: #888;
             cursor: pointer;
         }
+
         .floating-toggle-btn {
             position: fixed;
             bottom: 24px;
@@ -102,14 +110,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
             font-size: 2rem;
             cursor: pointer;
             transition: background 0.2s;
         }
+
         .floating-toggle-btn:hover {
             background: #084298;
         }
+
         .mode-toggle {
             margin-top: 5px;
             margin-bottom: 12px;
@@ -118,6 +128,7 @@
             justify-content: center;
             width: 100%;
         }
+
         .slider-row {
             /* width: 90vw; */
             display: flex;
@@ -125,42 +136,52 @@
             align-items: center;
             margin-bottom: 8px;
         }
+
         .slider-label {
             font-weight: 500;
             margin-bottom: 4px;
         }
+
         .slider-value {
             margin-top: 4px;
             margin-bottom: 8px;
         }
+
         .controls-row {
             gap: 24px;
             width: 100%;
             margin-top: 0;
         }
+
         .dropdown .dropdown-menu {
             min-width: 160px;
         }
+
         .form-range::-webkit-slider-thumb {
             background: #0d6efd;
         }
+
         .form-range::-moz-range-thumb {
             background: #0d6efd;
         }
+
         .form-label {
             margin-bottom: 1rem;
             font-weight: 500;
         }
+
         @media (max-width: 768px) {
             .slider-row {
                 width: 98vw;
             }
+
             .controls-row {
                 flex-direction: column;
                 gap: 12px;
                 align-items: center;
             }
         }
+
         /* @media (max-width: 480px) {
             .slider-row {
                 width: 99vw;
@@ -185,6 +206,7 @@
             overflow: hidden;
             margin: 0 auto;
         }
+
         .neumorphic-switch.speed-switch .toggle-label {
             flex: 1 1 0;
             text-align: center;
@@ -203,15 +225,17 @@
             border: none;
             background: none;
         }
+
         .neumorphic-switch.speed-switch .toggle-label.active {
             color: #1a237e;
             opacity: 1;
             font-weight: 700;
-            background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.60) 60%, rgba(255, 255, 255, 0.40) 100%);
             border: 1.5px solid #fff;
             backdrop-filter: blur(8px) saturate(1.2);
             -webkit-backdrop-filter: blur(8px) saturate(1.2);
         }
+
         .neumorphic-switch.speed-switch .toggle-thumb {
             position: absolute;
             top: 6px;
@@ -225,26 +249,44 @@
             align-items: center;
             justify-content: center;
             font-size: 1.08em;
-            transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s, color 0.3s;
+            transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1), background 0.3s, color 0.3s;
             z-index: 2;
             pointer-events: none;
             color: #1a237e;
             font-weight: 700;
         }
+
         .neumorphic-switch.speed-switch .toggle-thumb.bouncy {
-            animation: thumb-bounce 0.45s cubic-bezier(.34,1.56,.64,1);
+            animation: thumb-bounce 0.45s cubic-bezier(.34, 1.56, .64, 1);
         }
+
         @keyframes thumb-bounce {
-            0% { transform: scale(1) var(--thumb-x, translateX(0)); }
-            40% { transform: scale(1.15, 0.85) var(--thumb-x, translateX(0)); }
-            60% { transform: scale(0.95, 1.08) var(--thumb-x, translateX(0)); }
-            80% { transform: scale(1.05, 0.96) var(--thumb-x, translateX(0)); }
-            100% { transform: scale(1) var(--thumb-x, translateX(0)); }
+            0% {
+                transform: scale(1) var(--thumb-x, translateX(0));
+            }
+
+            40% {
+                transform: scale(1.15, 0.85) var(--thumb-x, translateX(0));
+            }
+
+            60% {
+                transform: scale(0.95, 1.08) var(--thumb-x, translateX(0));
+            }
+
+            80% {
+                transform: scale(1.05, 0.96) var(--thumb-x, translateX(0));
+            }
+
+            100% {
+                transform: scale(1) var(--thumb-x, translateX(0));
+            }
         }
+
         .overlay-controls,
         .overlay-controls * {
             color: #fff !important;
         }
+
         .overlay-controls .btn,
         .overlay-controls .btn-outline-primary,
         .overlay-controls .btn-outline-secondary {
@@ -252,31 +294,44 @@
             padding: 14px 0;
             min-width: 180px;
             border-radius: 18px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.60) 60%, rgba(255, 255, 255, 0.40) 100%);
             border: 1.5px solid #fff;
             backdrop-filter: blur(8px) saturate(1.2);
             -webkit-backdrop-filter: blur(8px) saturate(1.2);
             color: #fff !important;
         }
-        
+
+        .btn.long-btn {
+            width: 50%;
+            margin: 0 10px;
+        }
+
+        .btn.short-btn {
+            width: 25%;
+        }
+
         .overlay-controls .btn.active,
         .overlay-controls .btn:active,
-        .overlay-controls .btn-check:checked + .btn {
+        .overlay-controls .btn-check:checked+.btn {
             background: #fff !important;
             color: #1a237e !important;
             border-color: #fff !important;
         }
+
         .overlay-controls .slider-label {
             color: #fff !important;
         }
+
         .overlay-controls .neumorphic-switch.speed-switch .toggle-label {
             color: #fff !important;
         }
+
         .overlay-controls .neumorphic-switch.speed-switch .toggle-label.active {
             color: #1a237e !important;
             background: #fff !important;
             border: 1.5px solid #fff !important;
         }
+
         /* Mode toggle pill style for Automatic/Manual */
         .overlay-controls .mode-toggle-inner .btn-group .btn {
             background: transparent;
@@ -287,21 +342,24 @@
             box-shadow: none;
             width: 100%;
         }
+
         .overlay-controls .mode-toggle-inner .btn-group .btn.active,
         .overlay-controls .mode-toggle-inner .btn-group .btn:active,
-        .overlay-controls .mode-toggle-inner .btn-group .btn-check:checked + .btn {
+        .overlay-controls .mode-toggle-inner .btn-group .btn-check:checked+.btn {
             background: #fff !important;
             color: #1a237e !important;
             border: 1.5px solid #fff !important;
         }
+
         .d-flex.justify-content-center.align-items-center.mb-2 {
             gap: 24px !important;
             margin-bottom: 24px !important;
         }
 
-        .btn-group{
+        .btn-group {
             width: 100%;
         }
+
         /* Action buttons two-row, three-column layout */
         .actions-flex-row {
             display: flex;
@@ -311,12 +369,12 @@
             width: 100%;
             margin-bottom: 12px;
         }
+
         .actions-flex-row .btn {
-            flex: 1 1 0;
+            /* flex: 1 1 0; */
             min-width: 0;
-            width: 32%;
-            max-width: 180px;
         }
+
         /* Enable Weather/Sky two-column layout */
         .feature-row {
             display: flex;
@@ -324,98 +382,21 @@
             width: 100%;
             margin-bottom: 18px;
         }
+
         .feature-col {
             flex: 1 1 0;
             display: flex;
             justify-content: center;
         }
+
         .feature-col .btn {
             width: 95%;
         }
-        .actions-grid-container {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr;
-            grid-template-rows: 1fr 1fr auto;
-            gap: 14px 14px;
-            width: 100%;
-            margin-bottom: 8px;
-        }
-        .actions-grid-container #swapMessageBtn {
-            grid-row: 1 / span 2;
-            grid-column: 1 / 2;
-            font-size: 2rem;
-            font-weight: 700;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .actions-grid-container #TrSTableTrigger {
-            grid-row: 1 / 2;
-            grid-column: 2 / 3;
-        }
-        .actions-grid-container #TrSEmergencyTrigger {
-            grid-row: 1 / 2;
-            grid-column: 3 / 4;
-        }
-        .actions-grid-container #TrSImagesTrigger {
-            grid-row: 2 / 3;
-            grid-column: 2 / 3;
-        }
-        .actions-grid-container #TrSTransportTrigger {
-            grid-row: 2 / 3;
-            grid-column: 3 / 4;
-        }
-        .actions-grid-container #sunnyBtn {
-            grid-row: 3 / 4;
-            grid-column: 1 / 2;
-        }
-        .actions-grid-container #cloudyBtn {
-            grid-row: 3 / 4;
-            grid-column: 2 / 3;
-        }
-        .actions-grid-container .btn {
-            min-width: 0;
-            min-height: 48px;
-            font-size: 1.18rem;
-            font-weight: 500;
-            border-radius: 18px;
-        }
-        @media (max-width: 600px) {
-            .actions-grid-container {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto auto auto auto;
-            }
-            .actions-grid-container #swapMessageBtn {
-                grid-row: 1 / 2;
-                grid-column: 1 / 3;
-                min-height: 64px;
-                font-size: 1.3rem;
-            }
-            .actions-grid-container #TrSTableTrigger {
-                grid-row: 2 / 3;
-                grid-column: 1 / 2;
-            }
-            .actions-grid-container #TrSEmergencyTrigger {
-                grid-row: 2 / 3;
-                grid-column: 2 / 3;
-            }
-            .actions-grid-container #TrSImagesTrigger {
-                grid-row: 3 / 4;
-                grid-column: 1 / 2;
-            }
-            .actions-grid-container #TrSTransportTrigger {
-                grid-row: 3 / 4;
-                grid-column: 2 / 3;
-            }
-            .actions-grid-container #sunnyBtn {
-                grid-row: 4 / 5;
-                grid-column: 1 / 2;
-            }
-            .actions-grid-container #cloudyBtn {
-                grid-row: 4 / 5;
-                grid-column: 2 / 3;
-            }
+
+        .mode-toggle .btn-group .btn {
+            flex: 1 1 0;
+            width: 50%;
+            margin: 0;
         }
     </style>
 </head>
@@ -433,15 +414,18 @@
                 <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
                 <label class="btn btn-outline-primary" for="manualMode">Manual</label>
             </div>
-            
+
         </div>
         <div class="feature-row">
-            <div class="feature-col"><button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable Weather</button></div>
-            <div class="feature-col"><button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable Sky</button></div>
+            <div class="feature-col"><button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable
+                    Weather</button></div>
+            <div class="feature-col"><button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable
+                    Sky</button></div>
         </div>
         <div class="slider-row" style="width:100%;">
             <hr style="border-top: 1.5px solid #e5e5ea; width: 100%; margin: 0 0 10px 0;">
-            <div class="d-flex flex-row align-items-center justify-content-between" style="background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%); border-radius: 18px; padding: 8px 16px; width: 100%; gap: 16px; border: 1.5px solid rgba(255,255,255,0.5); backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 2px 8px 0 rgba(31,38,135,0.08);">
+            <div class="d-flex flex-row align-items-center justify-content-between"
+                style="background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%); border-radius: 18px; padding: 8px 16px; width: 100%; gap: 16px; border: 1.5px solid rgba(255,255,255,0.5); backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 2px 8px 0 rgba(31,38,135,0.08);">
                 <span class="slider-label mb-0" style="font-weight: 500; color: #23242a; min-width: 56px;">Speed</span>
                 <div class="neumorphic-switch speed-switch" id="speedSwitch">
                     <span class="toggle-label left" data-speed="1">1x</span>
@@ -462,17 +446,21 @@
             </div>
         </div>
         <hr class="my-3" style="border-top: 1.5px solid #e5e5ea; width: 90%; margin: 18px auto;">
-        <div class="text-center mb-2" style="font-weight: 600; color: #fff; opacity: 0.8; letter-spacing: 0.5px;">Actions</div>
-        <div class="actions-grid-container">
-            <button class="btn btn-outline-secondary swap-message-btn" id="swapMessageBtn">Swap Message</button>
-            <button class="btn btn-outline-secondary" id="TrSTableTrigger">Time Table</button>
-            <button class="btn btn-outline-secondary" id="TrSEmergencyTrigger">Emergency</button>
-            <button class="btn btn-outline-secondary" id="TrSImagesTrigger">Images</button>
-            <button class="btn btn-outline-secondary" id="TrSTransportTrigger">Transport</button>
-            <button class="btn btn-outline-secondary" id="sunnyBtn">Sunny</button>
-            <button class="btn btn-outline-secondary" id="cloudyBtn">Cloudy</button>
+        <div class="text-center mb-2" style="font-weight: 600; color: #fff; opacity: 0.8; letter-spacing: 0.5px;">
+            Actions</div>
+        <div class="actions-flex-row">
+            <button class="btn btn-outline-secondary long-btn" id="swapMessageBtn">Swap Message</button>
+            <button class="btn btn-outline-secondary short-btn" id="TrSTableTrigger">Time Table</button>
+            <button class="btn btn-outline-secondary short-btn" id="TrSEmergencyTrigger">Emergency</button>
+        </div>
+        <div class="actions-flex-row">
+            <button class="btn btn-outline-secondary short-btn" id="sunnyBtn">Sunny</button>
+            <button class="btn btn-outline-secondary short-btn" id="cloudyBtn">Cloudy</button>
+            <button class="btn btn-outline-secondary short-btn" id="TrSImagesTrigger">Images</button>
+            <button class="btn btn-outline-secondary short-btn" id="TrSTransportTrigger">Transport</button>
         </div>
     </div>
+
     <button class="floating-toggle-btn" id="toggleOverlay" title="Show Controls">
         <span>&#9881;</span>
     </button>
@@ -494,7 +482,7 @@
             toggleBtn.style.display = 'flex';
         });
         // Mode toggle logic
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const autoMode = document.getElementById('autoMode');
             const manualMode = document.getElementById('manualMode');
             // Train toggle button IDs
@@ -545,7 +533,7 @@
             updateSpeedThumb(speedLabels[0]);
 
             speedLabels.forEach(label => {
-                label.addEventListener('click', function() {
+                label.addEventListener('click', function () {
                     updateSpeedThumb(label);
                 });
             });
