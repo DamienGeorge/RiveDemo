@@ -47,30 +47,40 @@
         }
         .overlay-controls {
             position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100vw;
-            background: rgba(255,255,255,0.96);
-            box-shadow: 0 -2px 12px rgba(9, 11, 102, 0.10);
-            z-index: 10;
-            padding: 0 0 16px 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.98);
+            width: 98vw;
+            max-width: 500px;
+            min-height: 50%;
+            padding: 40px 10px 32px 10px;
+            background: linear-gradient(135deg, rgba(60,70,85,0.84) 60%, rgba(60,70,85,0.68) 100%);
+            border: 1.5px solid rgba(255,255,255,0.08);
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px #fff1 inset;
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            z-index: 100;
+            border-radius: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transform: translateY(100%);
             opacity: 0;
             pointer-events: none;
             transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 90vh;
         }
         .overlay-controls.active {
-            transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
         }
         .overlay-close-btn {
             position: absolute;
-            top: 8px;
-            right: 24px;
+            top: 12px;
+            right: 18px;
             z-index: 20;
             background: none;
             border: none;
@@ -101,28 +111,19 @@
             background: #084298;
         }
         .mode-toggle {
-            margin-top: -32px;
+            margin-top: 5px;
             margin-bottom: 12px;
             z-index: 20;
             display: flex;
             justify-content: center;
-            width: 100vw;
-        }
-        .mode-toggle-inner {
-            background: #fff;
-            border-radius: 32px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            padding: 6px 24px;
-            display: inline-flex;
-            align-items: center;
+            width: 100%;
         }
         .slider-row {
-            width: 90vw;
-            max-width: 700px;
+            /* width: 90vw; */
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .slider-label {
             font-weight: 500;
@@ -133,11 +134,9 @@
             margin-bottom: 8px;
         }
         .controls-row {
-            display: flex;
-            justify-content: center;
             gap: 24px;
             width: 100%;
-            margin-top: 8px;
+            margin-top: 0;
         }
         .dropdown .dropdown-menu {
             min-width: 160px;
@@ -161,18 +160,12 @@
                 gap: 12px;
                 align-items: center;
             }
-            .mode-toggle-inner {
-                padding: 6px 8vw;
-            }
         }
-        @media (max-width: 480px) {
+        /* @media (max-width: 480px) {
             .slider-row {
                 width: 99vw;
             }
-            .mode-toggle-inner {
-                padding: 6px 2vw;
-            }
-        }
+        } */
         /* Neumorphic 3-way switch for speed */
         .neumorphic-switch.speed-switch {
             display: flex;
@@ -183,9 +176,9 @@
             min-width: 220px;
             max-width: 320px;
             height: 48px;
-            background: #f1f2f6;
+            background: none;
             border-radius: 32px;
-            box-shadow: 0 2px 12px #e0e0e0, 0 1.5px 4px #fff inset;
+            box-shadow: none;
             cursor: pointer;
             transition: background 0.3s;
             padding: 0;
@@ -197,7 +190,7 @@
             text-align: center;
             font-weight: 600;
             font-size: 1.08em;
-            color: #23242a;
+            color: #fff;
             opacity: 0.7;
             z-index: 1;
             pointer-events: auto;
@@ -205,11 +198,19 @@
             transition: color 0.3s, opacity 0.3s;
             min-width: 0;
             user-select: none;
+            border-radius: 18px;
+            padding: 6px 22px;
+            border: none;
+            background: none;
         }
         .neumorphic-switch.speed-switch .toggle-label.active {
-            color: #007aff;
+            color: #1a237e;
             opacity: 1;
             font-weight: 700;
+            background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%);
+            border: 1.5px solid #fff;
+            backdrop-filter: blur(8px) saturate(1.2);
+            -webkit-backdrop-filter: blur(8px) saturate(1.2);
         }
         .neumorphic-switch.speed-switch .toggle-thumb {
             position: absolute;
@@ -224,9 +225,197 @@
             align-items: center;
             justify-content: center;
             font-size: 1.08em;
-            transition: transform 0.3s, background 0.3s, color 0.3s;
+            transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), background 0.3s, color 0.3s;
             z-index: 2;
             pointer-events: none;
+            color: #1a237e;
+            font-weight: 700;
+        }
+        .neumorphic-switch.speed-switch .toggle-thumb.bouncy {
+            animation: thumb-bounce 0.45s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes thumb-bounce {
+            0% { transform: scale(1) var(--thumb-x, translateX(0)); }
+            40% { transform: scale(1.15, 0.85) var(--thumb-x, translateX(0)); }
+            60% { transform: scale(0.95, 1.08) var(--thumb-x, translateX(0)); }
+            80% { transform: scale(1.05, 0.96) var(--thumb-x, translateX(0)); }
+            100% { transform: scale(1) var(--thumb-x, translateX(0)); }
+        }
+        .overlay-controls,
+        .overlay-controls * {
+            color: #fff !important;
+        }
+        .overlay-controls .btn,
+        .overlay-controls .btn-outline-primary,
+        .overlay-controls .btn-outline-secondary {
+            font-size: 1.18rem;
+            padding: 14px 0;
+            min-width: 180px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%);
+            border: 1.5px solid #fff;
+            backdrop-filter: blur(8px) saturate(1.2);
+            -webkit-backdrop-filter: blur(8px) saturate(1.2);
+            color: #fff !important;
+        }
+        
+        .overlay-controls .btn.active,
+        .overlay-controls .btn:active,
+        .overlay-controls .btn-check:checked + .btn {
+            background: #fff !important;
+            color: #1a237e !important;
+            border-color: #fff !important;
+        }
+        .overlay-controls .slider-label {
+            color: #fff !important;
+        }
+        .overlay-controls .neumorphic-switch.speed-switch .toggle-label {
+            color: #fff !important;
+        }
+        .overlay-controls .neumorphic-switch.speed-switch .toggle-label.active {
+            color: #1a237e !important;
+            background: #fff !important;
+            border: 1.5px solid #fff !important;
+        }
+        /* Mode toggle pill style for Automatic/Manual */
+        .overlay-controls .mode-toggle-inner .btn-group .btn {
+            background: transparent;
+            color: #fff !important;
+            border: 1.5px solid #fff !important;
+            border-radius: 8px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            box-shadow: none;
+            width: 100%;
+        }
+        .overlay-controls .mode-toggle-inner .btn-group .btn.active,
+        .overlay-controls .mode-toggle-inner .btn-group .btn:active,
+        .overlay-controls .mode-toggle-inner .btn-group .btn-check:checked + .btn {
+            background: #fff !important;
+            color: #1a237e !important;
+            border: 1.5px solid #fff !important;
+        }
+        .d-flex.justify-content-center.align-items-center.mb-2 {
+            gap: 24px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .btn-group{
+            width: 100%;
+        }
+        /* Action buttons two-row, three-column layout */
+        .actions-flex-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        .actions-flex-row .btn {
+            flex: 1 1 0;
+            min-width: 0;
+            width: 32%;
+            max-width: 180px;
+        }
+        /* Enable Weather/Sky two-column layout */
+        .feature-row {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            margin-bottom: 18px;
+        }
+        .feature-col {
+            flex: 1 1 0;
+            display: flex;
+            justify-content: center;
+        }
+        .feature-col .btn {
+            width: 95%;
+        }
+        .actions-grid-container {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr auto;
+            gap: 14px 14px;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .actions-grid-container #swapMessageBtn {
+            grid-row: 1 / span 2;
+            grid-column: 1 / 2;
+            font-size: 2rem;
+            font-weight: 700;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .actions-grid-container #TrSTableTrigger {
+            grid-row: 1 / 2;
+            grid-column: 2 / 3;
+        }
+        .actions-grid-container #TrSEmergencyTrigger {
+            grid-row: 1 / 2;
+            grid-column: 3 / 4;
+        }
+        .actions-grid-container #TrSImagesTrigger {
+            grid-row: 2 / 3;
+            grid-column: 2 / 3;
+        }
+        .actions-grid-container #TrSTransportTrigger {
+            grid-row: 2 / 3;
+            grid-column: 3 / 4;
+        }
+        .actions-grid-container #sunnyBtn {
+            grid-row: 3 / 4;
+            grid-column: 1 / 2;
+        }
+        .actions-grid-container #cloudyBtn {
+            grid-row: 3 / 4;
+            grid-column: 2 / 3;
+        }
+        .actions-grid-container .btn {
+            min-width: 0;
+            min-height: 48px;
+            font-size: 1.18rem;
+            font-weight: 500;
+            border-radius: 18px;
+        }
+        @media (max-width: 600px) {
+            .actions-grid-container {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto auto auto;
+            }
+            .actions-grid-container #swapMessageBtn {
+                grid-row: 1 / 2;
+                grid-column: 1 / 3;
+                min-height: 64px;
+                font-size: 1.3rem;
+            }
+            .actions-grid-container #TrSTableTrigger {
+                grid-row: 2 / 3;
+                grid-column: 1 / 2;
+            }
+            .actions-grid-container #TrSEmergencyTrigger {
+                grid-row: 2 / 3;
+                grid-column: 2 / 3;
+            }
+            .actions-grid-container #TrSImagesTrigger {
+                grid-row: 3 / 4;
+                grid-column: 1 / 2;
+            }
+            .actions-grid-container #TrSTransportTrigger {
+                grid-row: 3 / 4;
+                grid-column: 2 / 3;
+            }
+            .actions-grid-container #sunnyBtn {
+                grid-row: 4 / 5;
+                grid-column: 1 / 2;
+            }
+            .actions-grid-container #cloudyBtn {
+                grid-row: 4 / 5;
+                grid-column: 2 / 3;
+            }
         }
     </style>
 </head>
@@ -238,30 +427,31 @@
     <div class="overlay-controls" id="overlayControls">
         <button class="overlay-close-btn" id="closeOverlay" title="Close">&times;</button>
         <div class="mode-toggle">
-            <div class="mode-toggle-inner">
-                <div class="btn-group" role="group" aria-label="Mode toggle">
-                    <input type="radio" class="btn-check" name="mode" id="autoMode" autocomplete="off" checked>
-                    <label class="btn btn-outline-primary" for="autoMode">Automatic</label>
-                    <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
-                    <label class="btn btn-outline-primary" for="manualMode">Manual</label>
-                </div>
+            <div class="btn-group" role="group" aria-label="Mode toggle">
+                <input type="radio" class="btn-check" name="mode" id="autoMode" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="autoMode">Automatic</label>
+                <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
+                <label class="btn btn-outline-primary" for="manualMode">Manual</label>
             </div>
+            
         </div>
-        <div class="d-flex justify-content-center align-items-center mb-2" style="gap: 12px;">
-            <button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable Weather</button>
-            <button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable Sky</button>
+        <div class="feature-row">
+            <div class="feature-col"><button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable Weather</button></div>
+            <div class="feature-col"><button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable Sky</button></div>
         </div>
-        <div class="slider-row">
-            <span class="slider-label">Speed</span>
-            <div class="neumorphic-toggle my-2">
+        <div class="slider-row" style="width:100%;">
+            <hr style="border-top: 1.5px solid #e5e5ea; width: 100%; margin: 0 0 10px 0;">
+            <div class="d-flex flex-row align-items-center justify-content-between" style="background: linear-gradient(135deg, rgba(255,255,255,0.60) 60%, rgba(255,255,255,0.40) 100%); border-radius: 18px; padding: 8px 16px; width: 100%; gap: 16px; border: 1.5px solid rgba(255,255,255,0.5); backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 2px 8px 0 rgba(31,38,135,0.08);">
+                <span class="slider-label mb-0" style="font-weight: 500; color: #23242a; min-width: 56px;">Speed</span>
                 <div class="neumorphic-switch speed-switch" id="speedSwitch">
                     <span class="toggle-label left" data-speed="1">1x</span>
                     <span class="toggle-label center" data-speed="5">5x</span>
                     <span class="toggle-label right" data-speed="10">10x</span>
-                    <span class="toggle-thumb" id="speedThumb"></span>
+                    <span id="speedThumb"></span>
                     <input type="hidden" id="speedValue" value="1">
                 </div>
             </div>
+            <hr style="border-top: 1.5px solid #e5e5ea; width: 100%; margin: 10px 0 0 0;">
         </div>
         <div class="controls-row">
             <div class="btn-group" role="group" aria-label="Layout toggle">
@@ -272,20 +462,15 @@
             </div>
         </div>
         <hr class="my-3" style="border-top: 1.5px solid #e5e5ea; width: 90%; margin: 18px auto;">
-        <div class="train-toggles-section d-flex justify-content-center align-items-center mb-2">
-            <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="trainTogglesDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Train Toggles
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="trainTogglesDropdown">
-                    <li><button id="TrSTableTrigger" class="dropdown-item">Time Table</button></li>
-                    <li><button id="TrSEmergencyTrigger" class="dropdown-item">Emergency</button></li>
-                    <li><button id="TrSImagesTrigger" class="dropdown-item">Images</button></li>
-                    <li><button id="TrSTransportTrigger" class="dropdown-item">Transport</button></li>
-                    <li><button id="TrSWeatherTrigger" class="dropdown-item">Weather</button></li>
-                </ul>
-            </div>
+        <div class="text-center mb-2" style="font-weight: 600; color: #fff; opacity: 0.8; letter-spacing: 0.5px;">Actions</div>
+        <div class="actions-grid-container">
+            <button class="btn btn-outline-secondary swap-message-btn" id="swapMessageBtn">Swap Message</button>
+            <button class="btn btn-outline-secondary" id="TrSTableTrigger">Time Table</button>
+            <button class="btn btn-outline-secondary" id="TrSEmergencyTrigger">Emergency</button>
+            <button class="btn btn-outline-secondary" id="TrSImagesTrigger">Images</button>
+            <button class="btn btn-outline-secondary" id="TrSTransportTrigger">Transport</button>
+            <button class="btn btn-outline-secondary" id="sunnyBtn">Sunny</button>
+            <button class="btn btn-outline-secondary" id="cloudyBtn">Cloudy</button>
         </div>
     </div>
     <button class="floating-toggle-btn" id="toggleOverlay" title="Show Controls">
@@ -294,7 +479,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv7.js"></script>
+    <script src="scripttimecalchv8.js"></script>
     <script>
         // Overlay toggle logic
         const overlay = document.getElementById('overlayControls');
@@ -308,24 +493,62 @@
             overlay.classList.remove('active');
             toggleBtn.style.display = 'flex';
         });
-        // Mode toggle logic (to be completed in JS file if needed)
+        // Mode toggle logic
         document.addEventListener('DOMContentLoaded', function() {
             const autoMode = document.getElementById('autoMode');
             const manualMode = document.getElementById('manualMode');
-            const trainTogglesDropdown = document.getElementById('trainTogglesDropdown');
-            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            // Train toggle button IDs
+            const trainToggleButtons = [
+                document.getElementById('TrSTableTrigger'),
+                document.getElementById('TrSEmergencyTrigger'),
+                document.getElementById('TrSImagesTrigger'),
+                document.getElementById('TrSTransportTrigger'),
+                document.getElementById('TrSWeatherTrigger')
+            ].filter(Boolean);
             function setMode() {
                 if (autoMode.checked) {
-                    trainTogglesDropdown.classList.add('disabled');
-                    dropdownItems.forEach(item => item.setAttribute('disabled', 'disabled'));
+                    trainToggleButtons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
                 } else {
-                    trainTogglesDropdown.classList.remove('disabled');
-                    dropdownItems.forEach(item => item.removeAttribute('disabled'));
+                    trainToggleButtons.forEach(btn => btn.removeAttribute('disabled'));
                 }
             }
             autoMode.addEventListener('change', setMode);
             manualMode.addEventListener('change', setMode);
             setMode();
+
+            // Speed switch logic
+            const speedSwitch = document.getElementById('speedSwitch');
+            const speedThumb = document.getElementById('speedThumb');
+            const speedLabels = speedSwitch.querySelectorAll('.toggle-label');
+            const speedValueInput = document.getElementById('speedValue');
+
+            function updateSpeedThumb(selectedLabel) {
+                // Move thumb to the correct position
+                const index = Array.from(speedLabels).indexOf(selectedLabel);
+                // 0: left, 1: center, 2: right
+                const positions = [8, 92, 176]; // px, adjust if needed
+                const translate = `translateX(${positions[index]}px)`;
+                speedThumb.style.setProperty('--thumb-x', translate);
+                speedThumb.style.transform = translate;
+                // Bouncy animation
+                speedThumb.classList.remove('bouncy');
+                void speedThumb.offsetWidth;
+                speedThumb.classList.add('bouncy');
+                // Update active class
+                speedLabels.forEach(lbl => lbl.classList.remove('active'));
+                selectedLabel.classList.add('active');
+                // Update hidden input value
+                speedValueInput.value = selectedLabel.getAttribute('data-speed');
+            }
+
+            // Set initial thumb position and value
+            updateSpeedThumb(speedLabels[0]);
+
+            speedLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    updateSpeedThumb(label);
+                });
+            });
         });
     </script>
 </body>

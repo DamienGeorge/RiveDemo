@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        body {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        .canvas-container {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            z-index: 1;
+            object-fit: fill;
+        }
+        canvas {
+            width: 100vw;
+            height: 100%;
+            display: block;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            border: none;
+            box-shadow: none;
+            aspect-ratio: 16/9;
+        }
+        .overlay-controls {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.98);
+            width: 98vw;
+            max-width: 500px;
+            min-height: 50%;
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 4px 32px rgba(9, 11, 102, 0.18), 0 1.5px 4px #fff inset;
+            z-index: 100;
+            padding: 50px 0px 20px 0px;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 90vh;
+        }
+        .overlay-controls.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .overlay-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            z-index: 20;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #888;
+            cursor: pointer;
+        }
+        .floating-toggle-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 20;
+            background: #0d6efd;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .floating-toggle-btn:hover {
+            background: #084298;
+        }
+        .mode-toggle {
+            margin-top: -32px;
+            margin-bottom: 12px;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            width: 100vw;
+        }
+        .mode-toggle-inner {
+            background: #fff;
+            border-radius: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 6px 24px;
+            display: inline-flex;
+            align-items: center;
+        }
+        .slider-row {
+            width: 90vw;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .slider-label {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .slider-value {
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .dropdown .dropdown-menu {
+            min-width: 160px;
+        }
+        .form-range::-webkit-slider-thumb {
+            background: #0d6efd;
+        }
+        .form-range::-moz-range-thumb {
+            background: #0d6efd;
+        }
+        .form-label {
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .slider-row {
+                width: 98vw;
+            }
+            .controls-row {
+                flex-direction: column;
+                gap: 12px;
+                align-items: center;
+            }
+            .mode-toggle-inner {
+                padding: 6px 8vw;
+            }
+        }
+        @media (max-width: 480px) {
+            .slider-row {
+                width: 99vw;
+            }
+            .mode-toggle-inner {
+                padding: 6px 2vw;
+            }
+        }
+        /* Neumorphic 3-way switch for speed */
+        .neumorphic-switch.speed-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            width: 260px;
+            min-width: 220px;
+            max-width: 320px;
+            height: 48px;
+            background: none;
+            border-radius: 32px;
+            box-shadow: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            padding: 0;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .neumorphic-switch.speed-switch .toggle-label {
+            flex: 1 1 0;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.08em;
+            color: #23242a;
+            opacity: 0.7;
+            z-index: 1;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: color 0.3s, opacity 0.3s, background 0.3s, border 0.3s;
+            min-width: 0;
+            user-select: none;
+            border-radius: 18px;
+            padding: 6px 22px;
+            border: none;
+            background: none;
+        }
+        .neumorphic-switch.speed-switch .toggle-label.active {
+            color: #007aff;
+            opacity: 1;
+            font-weight: 700;
+        }
+        .neumorphic-switch.speed-switch .toggle-thumb {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            width: 72px;
+            height: 36px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px #e0e0e0, 0 1.5px 4px #fff inset;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.08em;
+            transition: transform 0.3s, background 0.3s, color 0.3s;
+            z-index: 2;
+            pointer-events: none;
+            color: #23242a;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="overlay-controls" id="overlayControls">
+        <button class="overlay-close-btn" id="closeOverlay" title="Close">&times;</button>
+        <div class="mode-toggle">
+            <div class="mode-toggle-inner">
+                <div class="btn-group" role="group" aria-label="Mode toggle">
+                    <input type="radio" class="btn-check" name="mode" id="autoMode" autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="autoMode">Automatic</label>
+                    <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="manualMode">Manual</label>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center mb-2" style="gap: 12px;">
+            <button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable Weather</button>
+            <button id="enableSkyBtn" class="btn btn-outline-primary ios-btn-pill">Enable Sky</button>
+        </div>
+        <div class="slider-row" style="width:100%;max-width:420px;">
+            <hr style="border-top: 1.5px solid #e5e5ea; width: 100%; margin: 0 0 10px 0;">
+            <div class="d-flex flex-row align-items-center justify-content-between" style="border-radius: 18px; padding: 8px 16px; width: 100%; gap: 16px;">
+                <span class="slider-label mb-0" style="font-weight: 500; color: #23242a; min-width: 56px;">Speed</span>
+                <div class="neumorphic-switch speed-switch" id="speedSwitch">
+                    <span class="toggle-label left" data-speed="1">1x</span>
+                    <span class="toggle-label center" data-speed="5">5x</span>
+                    <span class="toggle-label right" data-speed="10">10x</span>
+                    <span class="toggle-thumb" id="speedThumb"></span>
+                    <input type="hidden" id="speedValue" value="1">
+                </div>
+            </div>
+            <hr style="border-top: 1.5px solid #e5e5ea; width: 100%; margin: 10px 0 0 0;">
+        </div>
+        <div class="controls-row">
+            <div class="btn-group" role="group" aria-label="Layout toggle">
+                <input type="radio" class="btn-check" name="layoutMode" id="mainLayoutMode" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="mainLayoutMode">Main Layout</label>
+                <input type="radio" class="btn-check" name="layoutMode" id="detailLayoutMode" autocomplete="off">
+                <label class="btn btn-outline-primary" for="detailLayoutMode">Detail Layout</label>
+            </div>
+        </div>
+        <hr class="my-3" style="border-top: 1.5px solid #e5e5ea; width: 90%; margin: 18px auto;">
+        <div class="text-center mb-2" style="font-weight: 600; color: #23242a; opacity: 0.8; letter-spacing: 0.5px;">Actions</div>
+        <div class="controls-row d-flex justify-content-center align-items-start" style="gap: 32px; margin-top: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 210px;">
+                <button class="btn btn-outline-secondary w-100" id="swapMessageBtn">Swap Message</button>
+                <div class="d-flex flex-row" style="gap: 10px;">
+                    <button class="btn btn-outline-secondary flex-fill" id="sunnyBtn">Sunny</button>
+                    <button class="btn btn-outline-secondary flex-fill" id="cloudyBtn">Cloudy</button>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 210px;">
+                <div class="d-flex flex-row" style="gap: 10px;">
+                    <button id="TrSTableTrigger" class="btn btn-outline-secondary flex-fill">Time Table</button>
+                    <button id="TrSEmergencyTrigger" class="btn btn-outline-secondary flex-fill">Emergency</button>
+                </div>
+                <div class="d-flex flex-row" style="gap: 10px;">
+                    <button id="TrSImagesTrigger" class="btn btn-outline-secondary flex-fill">Images</button>
+                    <button id="TrSTransportTrigger" class="btn btn-outline-secondary flex-fill">Transport</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="floating-toggle-btn" id="toggleOverlay" title="Show Controls">
+        <span>&#9881;</span>
+    </button>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/@rive-app/canvas"></script>
+    <script src="scripttimecalchv7.js"></script>
+    <script>
+        // Overlay toggle logic
+        const overlay = document.getElementById('overlayControls');
+        const toggleBtn = document.getElementById('toggleOverlay');
+        const closeBtn = document.getElementById('closeOverlay');
+        toggleBtn.addEventListener('click', () => {
+            overlay.classList.add('active');
+            toggleBtn.style.display = 'none';
+        });
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            toggleBtn.style.display = 'flex';
+        });
+        // Mode toggle logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const autoMode = document.getElementById('autoMode');
+            const manualMode = document.getElementById('manualMode');
+            // Train toggle button IDs
+            const trainToggleButtons = [
+                document.getElementById('TrSTableTrigger'),
+                document.getElementById('TrSEmergencyTrigger'),
+                document.getElementById('TrSImagesTrigger'),
+                document.getElementById('TrSTransportTrigger'),
+                document.getElementById('TrSWeatherTrigger')
+            ].filter(Boolean);
+            function setMode() {
+                if (autoMode.checked) {
+                    trainToggleButtons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                } else {
+                    trainToggleButtons.forEach(btn => btn.removeAttribute('disabled'));
+                }
+            }
+            autoMode.addEventListener('change', setMode);
+            manualMode.addEventListener('change', setMode);
+            setMode();
+
+            // Speed switch logic
+            const speedSwitch = document.getElementById('speedSwitch');
+            const speedThumb = document.getElementById('speedThumb');
+            const speedLabels = speedSwitch.querySelectorAll('.toggle-label');
+            const speedValueInput = document.getElementById('speedValue');
+
+            function updateSpeedThumb(selectedLabel) {
+                // Set thumb text to the selected label's text (e.g., "5x")
+                speedThumb.textContent = selectedLabel.textContent;
+                // Move thumb to the correct position
+                const index = Array.from(speedLabels).indexOf(selectedLabel);
+                // 0: left, 1: center, 2: right
+                const positions = [8, 92, 176]; // px, adjust if needed
+                speedThumb.style.transform = `translateX(${positions[index]}px)`;
+                // Update active class
+                speedLabels.forEach(lbl => lbl.classList.remove('active'));
+                selectedLabel.classList.add('active');
+                // Update hidden input value
+                speedValueInput.value = selectedLabel.getAttribute('data-speed');
+            }
+
+            // Set initial thumb position and value
+            updateSpeedThumb(speedLabels[0]);
+            speedThumb.textContent = speedLabels[0].textContent;
+
+            speedLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    updateSpeedThumb(label);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
