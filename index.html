@@ -50,6 +50,99 @@
             aspect-ratio: 16/9;
         }
 
+        /* Mobile Portrait Mode Canvas Optimization */
+        @media (max-width: 768px) and (orientation: portrait) {
+            :root {
+                --overlay-padding: 35px; /* bottom padding + top padding */
+                --button-height: 40px;
+                --button-margin: 10px;
+                --section-margin: 14px;
+                --toggle-height: 40px;
+                --speed-section-height: 60px;
+                --feature-row-height: 54px;
+                --close-btn-space: 36px;
+                
+                /* Calculate total overlay height dynamically */
+                --overlay-content-height: calc(
+                    var(--overlay-padding) + 
+                    var(--toggle-height) + var(--section-margin) +
+                    var(--feature-row-height) + var(--section-margin) +
+                    var(--speed-section-height) + var(--section-margin) +
+                    var(--toggle-height) + var(--section-margin) +
+                    (var(--button-height) * 3) + (var(--button-margin) * 3) +
+                    var(--close-btn-space)
+                );
+            }
+            
+            .canvas-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: calc(100vh - var(--overlay-content-height));
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f0f0f0;
+            }
+            
+            canvas {
+                width: auto;
+                height: auto;
+                max-width: 100vw;
+                max-height: calc(100vh - var(--overlay-content-height));
+                aspect-ratio: 16/9;
+                object-fit: contain;
+            }
+            
+            /* Ensure canvas scales properly based on available space */
+            @supports (aspect-ratio: 16/9) {
+                canvas {
+                    width: min(100vw, calc((100vh - var(--overlay-content-height)) * 16/9));
+                    height: min(calc(100vh - var(--overlay-content-height)), calc(100vw * 9/16));
+                }
+            }
+        }
+
+        @media (max-width: 480px) and (orientation: portrait) {
+            :root {
+                --overlay-padding: 32px; /* Smaller padding on small screens */
+                --button-height: 38px;
+                --button-margin: 8px;
+                --section-margin: 12px;
+                --toggle-height: 38px;
+                --speed-section-height: 55px;
+                --feature-row-height: 50px;
+                --close-btn-space: 32px;
+                
+                /* Recalculate for smaller screens */
+                --overlay-content-height: calc(
+                    var(--overlay-padding) + 
+                    var(--toggle-height) + var(--section-margin) +
+                    var(--feature-row-height) + var(--section-margin) +
+                    var(--speed-section-height) + var(--section-margin) +
+                    var(--toggle-height) + var(--section-margin) +
+                    (var(--button-height) * 3) + (var(--button-margin) * 3) +
+                    var(--close-btn-space)
+                );
+            }
+            
+            .canvas-container {
+                height: calc(100vh - var(--overlay-content-height));
+            }
+            
+            canvas {
+                max-height: calc(100vh - var(--overlay-content-height));
+            }
+            
+            @supports (aspect-ratio: 16/9) {
+                canvas {
+                    width: min(100vw, calc((100vh - var(--overlay-content-height)) * 16/9));
+                    height: min(calc(100vh - var(--overlay-content-height)), calc(100vw * 9/16));
+                }
+            }
+        }
+
         .overlay-controls {
             position: fixed;
             bottom: 24px;
@@ -514,6 +607,28 @@
             hr {
                 margin: 14px auto !important;
             }
+            
+            /* Mobile-specific layout table changes */
+            .layout-table {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .layout-column {
+                padding: 0;
+                background: transparent;
+                border: none;
+            }
+            
+            .layout-column.inactive {
+                display: none !important;
+            }
+            
+            .layout-column.active {
+                display: flex !important;
+                background: transparent;
+                border: none;
+            }
         }
 
         @media (max-width: 480px) {
@@ -542,6 +657,62 @@
                 font-size: 1rem;
             }
         }
+
+        /* Table-like Layout */
+        .layout-table {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .layout-column {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 0.3s, background 0.3s;
+        }
+
+        .layout-column.active {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .layout-column.inactive {
+            opacity: 0.5;
+        }
+
+        .column-header {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #fff;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .column-content {
+            width: 100%;
+        }
+
+        .layout-btn {
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            padding: 8px 12px;
+            min-height: 36px;
+        }
+
+        .layout-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -558,7 +729,6 @@
                 <input type="radio" class="btn-check" name="mode" id="manualMode" autocomplete="off">
                 <label class="btn btn-outline-primary" for="manualMode">Manual</label>
             </div>
-
         </div>
         <div class="feature-row">
             <div class="feature-col"><button id="enableWeatherBtn" class="btn btn-outline-primary ios-btn-pill">Enable
@@ -589,23 +759,29 @@
                 <label class="btn btn-outline-primary" for="detailLayoutMode">Detail Layout</label>
             </div>
         </div>
-        <hr class="my-3" style="border-top: 1.5px solid #e5e5ea; width: 90%; margin: 18px auto;">
-        <div class="text-center mb-2" style="font-weight: 600; color: #fff; opacity: 0.8; letter-spacing: 0.5px;">
-            Actions</div>
-        <div class="actions-flex-row">
-            <button class="btn btn-outline-secondary long-btn" id="swapMessageBtn">Swap Message</button>
-            <button class="btn btn-outline-secondary short-btn" id="TrSTableTrigger">Time Table</button>
-            <button class="btn btn-outline-secondary short-btn" id="TrSEmergencyTrigger">Emergency</button>
-        </div>
-        <div class="actions-flex-row">
-            <button class="btn btn-outline-secondary short-btn" id="sunnyBtn">Sunny</button>
-            <button class="btn btn-outline-secondary short-btn" id="cloudyBtn">Cloudy</button>
-            <button class="btn btn-outline-secondary short-btn" id="TrSImagesTrigger">Images</button>
-            <button class="btn btn-outline-secondary short-btn" id="TrSTransportTrigger">Transport</button>
-        </div>
-        <div class="actions-flex-row-partial">
-            <button class="btn btn-outline-secondary short-btn" id="TrSWeatherTrigger">Weather</button>
-            <button class="btn btn-outline-secondary short-btn" id="TrSNewTrigger">New Button</button>
+        
+        <!-- Table-like Layout -->
+        <div class="layout-table">
+            <!-- Main Layout Column -->
+            <div class="layout-column" id="mainLayoutColumn">
+                <div class="column-content">
+                    <button class="btn btn-outline-secondary layout-btn" id="swapMessageBtn">Swap Message</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="sunnyBtn">Sunny</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="cloudyBtn">Cloudy</button>
+                </div>
+            </div>
+            
+            <!-- Detail Layout Column -->
+            <div class="layout-column" id="detailLayoutColumn">
+                <div class="column-content">
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSTableTrigger">Time Table</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSEmergencyTrigger">Emergency</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSImagesTrigger">Images</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSTransportTrigger">Transport</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSWeatherTrigger">Weather</button>
+                    <button class="btn btn-outline-secondary layout-btn" id="TrSNewTrigger">New Button</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -685,6 +861,43 @@
                     updateSpeedThumb(label);
                 });
             });
+
+            // Layout column toggle functionality
+            const mainLayoutMode = document.getElementById('mainLayoutMode');
+            const detailLayoutMode = document.getElementById('detailLayoutMode');
+            const mainLayoutColumn = document.getElementById('mainLayoutColumn');
+            const detailLayoutColumn = document.getElementById('detailLayoutColumn');
+            
+            function toggleLayoutColumns() {
+                const mainLayoutButtons = mainLayoutColumn.querySelectorAll('.layout-btn');
+                const detailLayoutButtons = detailLayoutColumn.querySelectorAll('.layout-btn');
+                
+                if (mainLayoutMode.checked) {
+                    // Enable Main Layout, disable Detail Layout
+                    mainLayoutColumn.classList.add('active');
+                    mainLayoutColumn.classList.remove('inactive');
+                    detailLayoutColumn.classList.add('inactive');
+                    detailLayoutColumn.classList.remove('active');
+                    
+                    mainLayoutButtons.forEach(btn => btn.removeAttribute('disabled'));
+                    detailLayoutButtons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                } else if (detailLayoutMode.checked) {
+                    // Enable Detail Layout, disable Main Layout
+                    detailLayoutColumn.classList.add('active');
+                    detailLayoutColumn.classList.remove('inactive');
+                    mainLayoutColumn.classList.add('inactive');
+                    mainLayoutColumn.classList.remove('active');
+                    
+                    detailLayoutButtons.forEach(btn => btn.removeAttribute('disabled'));
+                    mainLayoutButtons.forEach(btn => btn.setAttribute('disabled', 'disabled'));
+                }
+            }
+            
+            mainLayoutMode.addEventListener('change', toggleLayoutColumns);
+            detailLayoutMode.addEventListener('change', toggleLayoutColumns);
+            
+            // Initialize with Main Layout active
+            toggleLayoutColumns();
         });
     </script>
 </body>
