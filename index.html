@@ -60,7 +60,7 @@
             width: 98vw;
             max-width: 500px;
             min-height: 50%;
-            padding: 40px 10px 32px 10px;
+            padding: 10px 10px 40px 10px;
             background: linear-gradient(135deg, rgba(60, 70, 85, 0.84) 60%, rgba(60, 70, 85, 0.68) 100%);
             border: 1.5px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.32), 0 1.5px 4px #fff1 inset;
@@ -88,7 +88,7 @@
 
         .overlay-close-btn {
             position: absolute;
-            top: 12px;
+            bottom: 12px;
             right: 18px;
             z-index: 20;
             background: none;
@@ -372,9 +372,23 @@
             margin-bottom: 12px;
         }
 
+        .actions-flex-row-partial {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            width: 100%;
+            margin-bottom: 12px;
+            align-self: flex-end;
+        }
+
         .actions-flex-row .btn {
             /* flex: 1 1 0; */
             min-width: 0;
+        }
+
+        .actions-flex-row-partial .btn {
+            min-width: 0;
+            margin-left: 12px;
         }
 
         /* Enable Weather/Sky two-column layout */
@@ -399,6 +413,134 @@
             flex: 1 1 0;
             width: 50%;
             margin: 0;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .overlay-controls {
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                width: calc(100vw - 30px);
+                max-width: 450px;
+                min-height: auto;
+                max-height: 75vh;
+                padding: 20px 15px 35px 15px;
+                border-radius: 20px;
+                transform: translateY(100%) scale(1);
+                margin: 0 auto;
+            }
+            .overlay-controls.active {
+                transform: translateY(0) scale(1);
+            }
+            .floating-toggle-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 48px;
+                height: 48px;
+                font-size: 1.8rem;
+            }
+            .overlay-close-btn {
+                bottom: 10px;
+                right: 15px;
+                font-size: 1.8rem;
+                color: #fff;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .overlay-controls .btn,
+            .overlay-controls .btn-outline-primary,
+            .overlay-controls .btn-outline-secondary {
+                font-size: 1rem;
+                padding: 10px 12px;
+                min-width: 0;
+                min-height: 40px;
+                border-radius: 16px;
+            }
+            .neumorphic-switch.speed-switch {
+                width: 100%;
+                max-width: 260px;
+                height: 40px;
+            }
+            .neumorphic-switch.speed-switch .toggle-label {
+                font-size: 1rem;
+                padding: 6px 14px;
+            }
+            .actions-flex-row {
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .actions-flex-row .btn {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+            .actions-flex-row-partial {
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .btn.long-btn {
+                width: auto;
+                margin: 0;
+                font-size: 1rem;
+                flex: 1 1 0;
+            }
+            .btn.short-btn {
+                width: auto;
+                flex: 1 1 0;
+                font-size: 1rem;
+            }
+            .feature-row {
+                margin-bottom: 14px;
+            }
+            .feature-col .btn {
+                width: 100%;
+                font-size: 1rem;
+            }
+            .slider-row {
+                margin-bottom: 8px;
+            }
+            .controls-row {
+                margin-bottom: 10px;
+            }
+            .text-center.mb-2 {
+                font-size: 1rem;
+                margin-bottom: 10px !important;
+            }
+            hr {
+                margin: 14px auto !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .overlay-controls {
+                padding: 18px 12px 32px 12px;
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+                width: calc(100vw - 20px);
+            }
+            .overlay-controls .btn,
+            .overlay-controls .btn-outline-primary,
+            .overlay-controls .btn-outline-secondary {
+                font-size: 1rem;
+                padding: 9px 10px;
+                min-height: 38px;
+            }
+            .neumorphic-switch.speed-switch .toggle-label {
+                font-size: 1rem;
+                padding: 5px 12px;
+            }
+            .btn.long-btn {
+                font-size: 1rem;
+            }
+            .btn.short-btn {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -461,6 +603,10 @@
             <button class="btn btn-outline-secondary short-btn" id="TrSImagesTrigger">Images</button>
             <button class="btn btn-outline-secondary short-btn" id="TrSTransportTrigger">Transport</button>
         </div>
+        <div class="actions-flex-row-partial">
+            <button class="btn btn-outline-secondary short-btn" id="TrSWeatherTrigger">Weather</button>
+            <button class="btn btn-outline-secondary short-btn" id="TrSNewTrigger">New Button</button>
+        </div>
     </div>
 
     <button class="floating-toggle-btn" id="toggleOverlay" title="Show Controls">
@@ -469,7 +615,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/@rive-app/canvas"></script>
-    <script src="scripttimecalchv8.js"></script>
+    <script src="scripttimecalchv9.js"></script>
     <script>
         // Overlay toggle logic
         const overlay = document.getElementById('overlayControls');
