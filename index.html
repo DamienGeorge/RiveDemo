@@ -52,9 +52,11 @@
 
         .overlay-controls {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.98);
+            bottom: 24px;
+            right: 24px;
+            left: auto;
+            top: auto;
+            transform: translateY(40px) scale(0.98);
             width: 98vw;
             max-width: 500px;
             min-height: 50%;
@@ -71,7 +73,7 @@
             align-items: center;
             opacity: 0;
             pointer-events: none;
-            transition: transform 0.3s cubic-bezier(.4, 0, .2, 1), opacity 0.3s cubic-bezier(.4, 0, .2, 1);
+            transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.3s cubic-bezier(.4,0,.2,1);
             box-sizing: border-box;
             overflow-y: auto;
             overflow-x: hidden;
@@ -81,7 +83,7 @@
         .overlay-controls.active {
             opacity: 1;
             pointer-events: auto;
-            transform: translate(-50%, -50%) scale(1);
+            transform: translateY(0) scale(1);
         }
 
         .overlay-close-btn {
