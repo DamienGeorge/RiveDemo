@@ -261,6 +261,9 @@ const riv = new rive.Rive({
     }
 })
 
+riv.layout = new rive.Layout({  fit: rive.Fit.ScaleDown,
+   alignment: rive.Alignment.Center });
+
 // Neumorphic 3-way speed switch logic
 const speedSwitch = document.getElementById('speedSwitch');
 const speedThumb = document.getElementById('speedThumb');
@@ -396,9 +399,16 @@ function toggleLayout(date) {
     }
 }
 
-window.addEventListener("resize", () => {
+window.onresize = computeSize();
+
+window
+.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+.addEventListener("change", computeSize);
+
+function computeSize() {
+    const canvas = document.getElementById('canvas');
     riv.resizeDrawingSurfaceToCanvas();
-});
+}
 
 function startAutoToggle(date) {
     if (toggleIntervalId) clearInterval(toggleIntervalId);
